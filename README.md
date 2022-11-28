@@ -31,4 +31,4 @@ TAG,"C:\Users\hoge\Documents\sample2.spdx"
 
 ### 実行結果
 
-exe直下の`Results`フォルダ以下に，`result_<保存日時:yyyyMMdd-HHMMss></ｈyyyyMMdd-HHMMss>_<CSVファイルのファイル名>.json`を作成して出力します．
+exe直下の`Results`フォルダ以下に，`result_<保存日時:yyyyMMdd-HHMMss>_<CSVファイルのファイル名>.json`を作成して出力します．
