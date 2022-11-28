@@ -16,6 +16,6 @@ var result = await automator.ExecuteAsync(targets);
 
 // 検証結果ファイル保存
 Directory.CreateDirectory("Results");
-using var stream = File.OpenWrite($"Results/result_{DateTime.Now:yyyyMMdd-HHMMss}_{Path.GetFileName(targetListCsv)}.json");
+using var stream = File.OpenWrite($"Results/result_{DateTime.Now:yyyyMMdd-HHmmss}_{Path.GetFileName(targetListCsv)}.json");
 using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
 JsonSerializer.Serialize(writer, result);
