@@ -10,7 +10,7 @@ var targetListCsv = args[0];
 var targetListFileReader = new CsvReader(new StreamReader(targetListCsv), CultureInfo.CurrentCulture);
 var targets = targetListFileReader.GetRecordsAsync<ValidationTarget>();
 
-// 自動検証事項
+// 自動検証実行
 using var automator = new SpdxValidatorAutomator();
 var result = await automator.ExecuteAsync(targets);
 
