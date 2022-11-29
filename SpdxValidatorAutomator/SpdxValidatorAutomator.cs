@@ -1,5 +1,7 @@
 ﻿using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using CsvHelper;
+using System.Globalization;
 
 namespace SpdxOnlineToolAutomation
 {
@@ -15,7 +17,10 @@ namespace SpdxOnlineToolAutomation
         private readonly IWebElement _modalBody;
         private readonly IWebElement _modalCloseButton;
 
-        public SpdxValidatorAutomator()
+        private readonly string _csvAbsolutePath;
+        private readonly string _fileBasePath;
+
+        public SpdxValidatorAutomator(string csvPath)
         {
             _driver = new ChromeDriver();
             _driver.Navigate().GoToUrl(@"https://tools.spdx.org/app/validate/");
@@ -28,6 +33,9 @@ namespace SpdxOnlineToolAutomation
             _modalTitle = _driver.FindElement(By.Id("modal-title"));
             _modalBody = _driver.FindElement(By.Id("modal-body"));
             _modalCloseButton = _driver.FindElement(By.XPath("//button[@data-dismiss=\"modal\"]"));
+
+            _csvAbsolutePath = Path.IsPathFullyQualified(csvPath) ? csvPath : Path.GetFullPath(csvPath);
+            _fileBasePath = Path.GetDirectoryName(_csvAbsolutePath)!;
         }
 
         public void Dispose()
@@ -35,8 +43,11 @@ namespace SpdxOnlineToolAutomation
             _driver.Dispose();
         }
 
-        public async Task<ValidationResult> ExecuteAsync(IAsyncEnumerable<ValidationTarget> validationTargets)
+        public async Task<ValidationResult> ExecuteAsync()
         {
+            var targetListFileReader = new CsvReader(new StreamReader(_csvAbsolutePath), CultureInfo.CurrentCulture);
+            var validationTargets = targetListFileReader.GetRecordsAsync<ValidationTarget>();
+
             var started = DateTime.Now;
             var fileValidationResults = new List<FileValidationResult>();
 
@@ -51,7 +62,7 @@ namespace SpdxOnlineToolAutomation
         private async Task<FileValidationResult> ValidateFile(ValidationTarget target)
         {
             _formatElement.SendKeys(target.FileFormat);
-            _fileElement.SendKeys(target.FileName);
+            _fileElement.SendKeys(GetAbsolutePath(target.FileName));
             _validateButton.Click();
 
             while (!_modalDiv.Displayed)
@@ -63,6 +74,11 @@ namespace SpdxOnlineToolAutomation
             _modalCloseButton.Click();
 
             return result;
+        }
+
+        private string GetAbsolutePath(string path)
+        {
+            return Path.IsPathFullyQualified(path) ? path : Path.GetFullPath(path, _fileBasePath);
         }
     }
 

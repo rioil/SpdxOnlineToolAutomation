@@ -5,14 +5,12 @@ using System.Text.Json;
 
 Console.WriteLine("SPDX Validator Automator");
 
-// 検証対象リストのCSVファイル読みこみ
+// 検証対象リストのCSVファイルパス取得
 var targetListCsv = args[0];
-var targetListFileReader = new CsvReader(new StreamReader(targetListCsv), CultureInfo.CurrentCulture);
-var targets = targetListFileReader.GetRecordsAsync<ValidationTarget>();
 
 // 自動検証実行
-using var automator = new SpdxValidatorAutomator();
-var result = await automator.ExecuteAsync(targets);
+using var automator = new SpdxValidatorAutomator(targetListCsv);
+var result = await automator.ExecuteAsync();
 
 // 検証結果ファイル保存
 Directory.CreateDirectory("Results");
