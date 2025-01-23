@@ -65,7 +65,7 @@ namespace SpdxOnlineToolAutomation
             _fileElement.SendKeys(GetAbsolutePath(target.FileName));
             _validateButton.Click();
 
-            while (!_modalDiv.Displayed)
+            while (!_modalDiv.Displayed || !_modalCloseButton.Displayed)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(200));
             }
